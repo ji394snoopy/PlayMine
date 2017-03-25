@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Mine</title>
+    <link rel="stylesheet" href="./Jyuan.css">
+    <link rel="stylesheet" href="./reset.css">
+    <link rel="stylesheet" href="./Mine.css">
+</head>
+
+<body>
+    <div class="container padding darkblue ui">
+        <div id="mineArea" class="padded word darkblue">
+            <div class="column horizontal-center" v-for="mineColumn in Mines">
+                <a class="mine vertical-center" v-for="mine in mineColumn" v-on:click.left="isFlaging?flagOnClick(mine):mineOnClick(mine)">
+                    <div v-show="mine.isClicked">{{mine.count}}</div>
+                </a>
+            </div>
+        </div>
+    </div>
+    <script src="./node_modules/vue/dist/vue.js"></script>
+    <script src="./node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="./Mine.js"></script>
+</body>
+
+</html>
