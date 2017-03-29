@@ -56,6 +56,7 @@ nav 20
 }
 
 .roundbutton {
+    display: inline-block;
     padding: 0.3em 1.2em;
     border-radius: 5px;
 }
@@ -505,17 +506,21 @@ h2+.sub {
     background-color: #fdd76b;
 }
 
-.word.darkblue {
-    color: #314152;
-}
-
 .ui.lightblue {
     background-color: #31b0d5;
     color: #ffffff;
 }
 
+.word.darkblue {
+    color: #314152;
+}
+
 .word.lightblue {
     color: #31b0d5;
+}
+
+.word.lightred {
+    color: #fe4042;
 }
 
 
