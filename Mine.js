@@ -10,7 +10,7 @@
 // clickable: true, 可否被點擊(flag/已點開後不能點)
 // isClicked: false, 是否被點擊
 // count: 0 附近炸彈數量
-
+var timerInterval = null;
 
 $(document).ready(function() {
     var vm = new Vue({
@@ -21,11 +21,35 @@ $(document).ready(function() {
             mineCount: 0,
             Mines: [],
             bomb: [],
-            isFlaging: false
+            isFlaging: false,
+            isTicking: false,
+            timer: {
+                start: 0,
+                mm: 0,
+                ss: 0
+            },
+            isgg: false
+        },
+        watch: {
+            isTicking: function(change) {
+                if (change) {
+                    this.timer.start = Date.now();
+                    timerInterval = setInterval(this.timerCount, 1000);
+                } else {
+                    clearInterval(timerInterval);
+                }
+            }
         },
         methods: {
             initMineArea: function(lev) {
                 this.level = lev;
+                this.Mines = [];
+                this.isTicking = false;
+                this.timer = {
+                    start: 0,
+                    mm: 0,
+                    ss: 0
+                };
                 //選擇區域大小
                 switch (this.level) {
                     case 0:
@@ -117,10 +141,17 @@ $(document).ready(function() {
                 }
             },
             mineOnClick: function(mine) {
-                mine.isClicked = true;
-                if (mine.count == 0) {
-                    this.checkZero();
+                if (!this.isTicking) {
+                    this.isTicking = true;
                 }
+                if (mine.count == 0) {
+                    this.checkZero(mine);
+                }
+                if (mine.count == -1) {
+                    this.isTicking = false;
+                    this.isgg = true;
+                }
+                mine.isClicked = true;
             },
             flagOnClick: function(mine) {
                 if (mine.flag) {
@@ -132,47 +163,59 @@ $(document).ready(function() {
                 }
             },
             checkZero: function(mine) {
-                var x = mine[i].x;
-                var y = mine[i].y;
-                if (mine.count == 0) {
+                var x = mine.x,
+                    y = mine.y,
+                    limit = this.mineSize;
+                //console.log('x: ' + x + ', y: ' + y);
+                if (mine.isClicked || mine.flag) {
+                    //return true;
+                } else if (mine.count > 0) {
+                    mine.isClicked = true;
+                } else if (mine.count === 0) {
+                    mine.isClicked = true;
                     ///FROM HERE////
                     //跑一次身邊九宮格
                     //左上
                     if (x - 1 >= 0 && y - 1 >= 0) {
-                        if (!this.Mines[y - 1][x - 1].bomb) { this.Mines[y - 1][x - 1].count += 1; }
+                        this.checkZero(this.Mines[y - 1][x - 1]);
                     }
                     //上
                     if (y - 1 >= 0) {
-                        if (!this.Mines[y - 1][x].bomb) { this.Mines[y - 1][x].count += 1; }
+                        this.checkZero(this.Mines[y - 1][x]);
                     }
                     //右上
                     if (x + 1 < limit && y - 1 >= 0) {
-                        if (!this.Mines[y - 1][x + 1].bomb) { this.Mines[y - 1][x + 1].count += 1; }
+                        this.checkZero(this.Mines[y - 1][x + 1]);
                     }
                     //左
                     if (x - 1 >= 0) {
-                        if (!this.Mines[y][x - 1].bomb) { this.Mines[y][x - 1].count += 1; }
+                        this.checkZero(this.Mines[y][x - 1]);
                     }
                     //右
                     if (x + 1 < limit) {
-                        if (!this.Mines[y][x + 1].bomb) { this.Mines[y][x + 1].count += 1; }
+                        this.checkZero(this.Mines[y][x + 1]);
                     }
                     //左下
                     if (x - 1 >= 0 && y + 1 < limit) {
-                        if (!this.Mines[y + 1][x - 1].bomb) { this.Mines[y + 1][x - 1].count += 1; }
+                        this.checkZero(this.Mines[y + 1][x - 1]);
                     }
                     //下
                     if (y + 1 < limit) {
-                        if (!this.Mines[y + 1][x].bomb) { this.Mines[y + 1][x].count += 1; }
+                        this.checkZero(this.Mines[y + 1][x]);
                     }
                     //右下
                     if (x + 1 < limit && y + 1 < limit) {
-                        if (!this.Mines[y + 1][x + 1].bomb) { this.Mines[y + 1][x + 1].count += 1; }
+                        this.checkZero(this.Mines[y + 1][x + 1]);
                     }
                 }
-                mine.isClicked = true;
+            },
+            timerCount: function() {
+                var d = Date.now(),
+                    diff = d - this.timer.start;
+                this.timer.mm = Math.floor(diff / 60000);
+                this.timer.ss = Math.floor((diff % 60000) / 1000);
             }
-        },
+        }
     });
     vm.initMineArea(2);
 });
