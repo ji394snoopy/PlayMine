@@ -7,14 +7,25 @@
     <link rel="stylesheet" href="./Jyuan.css">
     <link rel="stylesheet" href="./reset.css">
     <link rel="stylesheet" href="./Mine.css">
+    <link rel="stylesheet" href="./node_modules/font-awesome/css/font-awesome.min.css">
 </head>
 
-<body>
-    <div class="container padding darkblue ui">
-        <div id="mineArea" class="padded word darkblue">
+<body class="darkblue ui">
+    <div class="container padding">
+        <div id="mineArea" class="padded">
+            <div class="padded horizontal-center controllArea">
+                <a class="roundbutton ui lightblue" v-on:click="initMineArea(level)">RESET</a>
+                <a class="roundbutton ui" v-on:click="initMineArea(0)" v-bind:class="{yellow:level==0,lightblue:level!=0}">LEVEL-1</a>
+                <a class="roundbutton ui" v-on:click="initMineArea(1)" v-bind:class="{yellow:level==1,lightblue:level!=1}">LEVEL-2</a>
+                <a class="roundbutton ui" v-on:click="initMineArea(2)" v-bind:class="{yellow:level==2,lightblue:level!=2}">LEVEL-3</a>
+                <div class="roundbutton controllObj timerCObj">
+                    <i class="fa fa-clock-o fa-2x word lightred" aria-hidden="true"></i><span class="word lightred">{{timer.mm}} : {{timer.ss}}</span>
+                </div>
+            </div>
             <div class="column horizontal-center" v-for="mineColumn in Mines">
                 <a class="mine vertical-center" v-for="mine in mineColumn" v-on:click.left="isFlaging?flagOnClick(mine):mineOnClick(mine)">
-                    <div v-show="mine.isClicked">{{mine.count}}</div>
+                    <div class="word" v-show="mine.isClicked" v-bind:class="{lightred:mine.bomb,lightblue:!mine.bomb}">{{mine.count}}</div>
+                    <!-- <div class="word" v-bind:class="{'lightblue':mine.isClicked,'darkblue':!mine.isClicked}">{{mine.count}}</div> -->
                 </a>
             </div>
         </div>
