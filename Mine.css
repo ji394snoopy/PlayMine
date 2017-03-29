@@ -2,6 +2,10 @@
     position: relative;
 }
 
+a {
+    cursor: pointer;
+}
+
 .mine {
     width: 2em;
     height: 2em;
@@ -17,8 +21,20 @@
     width: 100%;
 }
 
-.small-mine {}
+.controllArea {
+    position: relative;
+}
 
-.midium-mine {}
+.controllObj {
+    position: absolute;
+}
 
-.large-mine {}
+.timerCObj {
+    display: inline-block;
+    right: 2em;
+    top: 1em;
+    border: 2px solid #f3f3f3;
+}
+.timerCObj > i{
+    margin-right: 10px;
+}
