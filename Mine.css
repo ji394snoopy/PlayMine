@@ -21,11 +21,11 @@ a {
     width: 100%;
 }
 
-.controllArea {
+.controlArea {
     position: relative;
 }
 
-.controllObj {
+.controlObj {
     position: absolute;
 }
 
@@ -37,4 +37,18 @@ a {
 }
 .timerCObj > i{
     margin-right: 10px;
+}
+
+.flagCObj {
+    display: inline-block;
+    right: 3em;
+    top: 7em;
+    width: 3em;
+    height: 3em;
+    border-radius: 5px;
+    border: 2px solid #f3f3f3;
+    background-color: #333;
+}
+.flagCObj.active{
+    background-color: #fff;
 }
