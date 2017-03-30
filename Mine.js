@@ -1,8 +1,18 @@
+// local>
 // level: 0 等級
 // mineSize: 0 區域大小
 // mineCount: 0 地雷數量
 // Mines: [] 地雷
+// isgg:false gg
+// isTicking: false 開始計時沒?
+// isFlaging: false 是否插旗動作
 //
+// timer:>
+// start: 起始時間豪秒數
+// mm: 換算分鐘數
+// ss: 換算秒數
+//
+// mine>
 // x: j, 位置x
 // y: i, 位置y
 // flag: false, 是否被插旗
@@ -10,6 +20,7 @@
 // clickable: true, 可否被點擊(flag/已點開後不能點)
 // isClicked: false, 是否被點擊
 // count: 0 附近炸彈數量
+
 var timerInterval = null;
 
 $(document).ready(function() {
@@ -23,6 +34,7 @@ $(document).ready(function() {
             bomb: [],
             isFlaging: false,
             isTicking: false,
+            winCountDown: 0,
             timer: {
                 start: 0,
                 mm: 0,
@@ -38,13 +50,28 @@ $(document).ready(function() {
                 } else {
                     clearInterval(timerInterval);
                 }
+            },
+            winCountDown: function(change) {
+                if (change == 0) {
+                    console.log('win');
+                    this.isTicking = false;
+                    this.isgg = true;
+                    var bomb = this.bomb;
+                    for (var i = bomb.length - 1; i >= 0; i--) {
+                        this.Mines[bomb[i].y][bomb[i].x].flag = true;
+                        this.Mines[bomb[i].y][bomb[i].x].isClicked = true;
+                    }
+                }
             }
         },
         methods: {
             initMineArea: function(lev) {
+                //初始化
                 this.level = lev;
                 this.Mines = [];
                 this.isTicking = false;
+                this.isgg = false;
+                this.isFlaging = false;
                 this.timer = {
                     start: 0,
                     mm: 0,
@@ -54,7 +81,8 @@ $(document).ready(function() {
                 switch (this.level) {
                     case 0:
                         this.mineSize = 5;
-                        this.mineCount = this.mineSize;
+                        //this.mineCount = this.mineSize;
+                        this.mineCount = 1;
                         break;
                     case 1:
                         this.mineSize = 7;
@@ -68,6 +96,9 @@ $(document).ready(function() {
                         this.mineSize = 5;
                         break;
                 }
+                //設定獲勝條件
+                this.winCountDown = this.mineSize * this.mineSize - this.mineCount;
+                //邊界
                 var limit = this.mineSize;
                 //初始埋下地雷
                 for (var i = 0; i < limit; i++) {
@@ -140,39 +171,68 @@ $(document).ready(function() {
                     }
                 }
             },
+            mineValue: function(mine) {
+                if (mine.flag) {
+                    return 'F';
+                } else if (mine.count == -1) {
+                    return 'B';
+                } else {
+                    return mine.count;
+                }
+            },
             mineOnClick: function(mine) {
-                if (!this.isTicking) {
-                    this.isTicking = true;
+                if (!this.isgg) {
+                    if (mine.clickable) {
+                        if (!this.isTicking) {
+                            this.isTicking = true;
+                        }
+                        if (mine.count == 0) {
+                            this.checkZero(mine);
+                        } else if (mine.count == -1) {
+                            this.isTicking = false;
+                            mine.isClicked = true;
+                            mine.clickable = false;
+                            this.isgg = true;
+                        } else {
+                            mine.isClicked = true;
+                            mine.clickable = false;
+                            this.winCountDown -= 1;
+                        }
+                    }
                 }
-                if (mine.count == 0) {
-                    this.checkZero(mine);
-                }
-                if (mine.count == -1) {
-                    this.isTicking = false;
-                    this.isgg = true;
-                }
-                mine.isClicked = true;
             },
             flagOnClick: function(mine) {
-                if (mine.flag) {
-                    mine.flag = false;
-                    mine.clickable = true;
-                } else {
-                    mine.flag = true;
-                    mine.clickable = false;
+                if (!this.isgg) {
+                    if (mine.flag) {
+                        mine.flag = false;
+                        mine.clickable = true;
+                        mine.isClicked = false;
+                    } else {
+                        mine.flag = true;
+                        mine.clickable = false;
+                        mine.isClicked = true;
+                    }
                 }
             },
             checkZero: function(mine) {
                 var x = mine.x,
                     y = mine.y,
                     limit = this.mineSize;
-                //console.log('x: ' + x + ', y: ' + y);
+                console.log('x: ' + x + ', y: ' + y);
                 if (mine.isClicked || mine.flag) {
                     //return true;
                 } else if (mine.count > 0) {
-                    mine.isClicked = true;
+                    if (!mine.isClicked) {
+                        mine.isClicked = true;
+                        this.winCountDown -= 1;
+                    }
+                    mine.clickable = false;
                 } else if (mine.count === 0) {
-                    mine.isClicked = true;
+                    if (!mine.isClicked) {
+                        mine.isClicked = true;
+                        this.winCountDown -= 1;
+                    }
+                    mine.clickable = false;
                     ///FROM HERE////
                     //跑一次身邊九宮格
                     //左上
@@ -217,7 +277,7 @@ $(document).ready(function() {
             }
         }
     });
-    vm.initMineArea(2);
+    vm.initMineArea(0);
 });
 
 
