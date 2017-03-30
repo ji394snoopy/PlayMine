@@ -12,20 +12,22 @@
 
 <body class="darkblue ui">
     <div class="container padding">
-        <div id="mineArea" class="padded">
-            <div class="padded horizontal-center controllArea">
+        <div id="mineArea" class="padded controlArea">
+            <div class="padded horizontal-center controlArea">
                 <a class="roundbutton ui lightblue" v-on:click="initMineArea(level)">RESET</a>
                 <a class="roundbutton ui" v-on:click="initMineArea(0)" v-bind:class="{yellow:level==0,lightblue:level!=0}">LEVEL-1</a>
                 <a class="roundbutton ui" v-on:click="initMineArea(1)" v-bind:class="{yellow:level==1,lightblue:level!=1}">LEVEL-2</a>
                 <a class="roundbutton ui" v-on:click="initMineArea(2)" v-bind:class="{yellow:level==2,lightblue:level!=2}">LEVEL-3</a>
-                <div class="roundbutton controllObj timerCObj">
+                <div class="roundbutton controlObj timerCObj">
                     <i class="fa fa-clock-o fa-2x word lightred" aria-hidden="true"></i><span class="word lightred">{{timer.mm}} : {{timer.ss}}</span>
                 </div>
             </div>
+            <div class="controlObj flagCObj vertical-center horizontal-center" v-bind:class="{active:isFlaging}" v-on:click="isFlaging=!isFlaging">
+                <i class="fa fa-flag fa-2x word lightred" aria-hidden="true"></i>
+            </div>
             <div class="column horizontal-center" v-for="mineColumn in Mines">
                 <a class="mine vertical-center" v-for="mine in mineColumn" v-on:click.left="isFlaging?flagOnClick(mine):mineOnClick(mine)">
-                    <div class="word" v-show="mine.isClicked" v-bind:class="{lightred:mine.bomb,lightblue:!mine.bomb}">{{mine.count}}</div>
-                    <!-- <div class="word" v-bind:class="{'lightblue':mine.isClicked,'darkblue':!mine.isClicked}">{{mine.count}}</div> -->
+                    <div class="word" v-show="mine.isClicked" v-bind:class="{lightred:mine.bomb,lightblue:!mine.bomb}">{{mineValue(mine)}}</div>
                 </a>
             </div>
         </div>
