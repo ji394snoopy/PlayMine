@@ -27,7 +27,7 @@
             </div>
             <div class="column horizontal-center" v-for="mineColumn in Mines">
                 <a class="mine vertical-center" v-for="mine in mineColumn" v-on:click.left="isFlaging?flagOnClick(mine):mineOnClick(mine)">
-                    <div class="word" v-show="mine.isClicked" v-bind:class="{lightred:mine.bomb,lightblue:!mine.bomb}">{{mineValue(mine)}}</div>
+                    <div class="word" v-show="mine.isClicked" v-bind:class="{lightred:mine.bomb||mine.flag,lightblue:!mine.bomb}">{{mineValue(mine)}}</div>
                 </a>
             </div>
         </div>
